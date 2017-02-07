@@ -1,0 +1,23 @@
+This is the collection of files on a project to build a CNC like machine to be used for 
+braille printing/embossing.
+
+This directory contains three subdirectories: 
+	Electrical Design - This folder contains everything to do with the electrical
+			    design of the device. It contains Proteus simulation project
+			    and code for the micro-controller. 
+	Mechanical Design - This folder contains the mechanical design of the device.
+			    The design was done using the Solidworks software. 
+			    All parts and their assembly is included in there.
+	
+	Software	  - This folder contains the code for the desktop application
+			    that is used to command the printer and a few other trial
+			    and experimentation codes for visualizing braille cells and
+			    such.
+
+
+Members
+	Dagim Sisay  (github: @dagiopia)
+	Elias Feleke (github: @elias.feleke)
+
+
+February, 2017
