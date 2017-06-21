@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 {
 	//expected arguments are Program <input text-file> <output-file>
     prg_name = argv[0];
-	if(3 > argc < 5){
+	if(2 > argc < 5){
 		if (DEBUG) func();
 	}
 
