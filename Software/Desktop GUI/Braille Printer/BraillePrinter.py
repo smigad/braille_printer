@@ -22,7 +22,7 @@ class App(QtGui.QMainWindow, Ui_BraillePrinter):
 
         super(App, self).__init__(parent)
 
-        self.SerialData = serial.Serial("COM3", 9600, timeout=0)
+        #self.SerialData = serial.Serial("COM3", 9600, timeout=0)
 
         self.UI = Ui_BraillePrinter()
         self.UI.setupUi(self)
@@ -82,19 +82,19 @@ class App(QtGui.QMainWindow, Ui_BraillePrinter):
     # Cancel Button Action 
     def Cancel_btn(self, CancelBtn):
       if self.UI.TextEditer.toPlainText() == "" or self.__directoryPath == "":
-        self.SerialData.write('0')
+        #self.SerialData.write('0')
         print "Cancel Button Clicked!"
         pass
       else:
         choice = self.DisplayMessage('Cancel')
         if choice == QMessageBox.Yes:
-          self.SerialData.write('0')
+          #self.SerialData.write('0')
           self.UI.TextEditer.setText("")
           self.__directoryPath = ""
           self.UI.progressBar.setProperty("value", 0)
           print "Cancel Successfully!" + self.__directoryPath
         else:
-          self.SerialData.write('0')
+          ##self.SerialData.write('0')
           print "Doing Nothing with the Cancel Button!"
           pass
 
@@ -105,7 +105,7 @@ class App(QtGui.QMainWindow, Ui_BraillePrinter):
         print "Print Button Clicked!"
         pass
       else:
-        self.SerialData.write('1')
+        #self.SerialData.write('1')
         self.DisplayMessage('PrintSuccess')
          
 
@@ -132,7 +132,7 @@ class App(QtGui.QMainWindow, Ui_BraillePrinter):
             self.UI.progressBar.setProperty("value", self.completed)    
 
       elif MenuBtn.text() == "Print File":
-        self.SerialData.write('1')
+        #self.SerialData.write('1')
         time.sleep(5600)
         self.DisplayMessage('PrintSuccess')
         print "Print Button Clicked!" 
@@ -141,8 +141,8 @@ class App(QtGui.QMainWindow, Ui_BraillePrinter):
         choice = self.DisplayMessage('Exit')
         if choice == QMessageBox.Yes:
           print "App Successfully Quited!"
-          self.SerialData.write('0')
-          self.SerialData.close()
+          #self.SerialData.write('0')
+          #self.SerialData.close()
           qApp.quit()
         else:
           pass
