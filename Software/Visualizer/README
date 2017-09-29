@@ -1,0 +1,8 @@
+Print Visualizer
+
+The code here is written in Python.
+It is the visualizer of the braille cells to be printed and
+is the window shown when the 'Preview' button is clicked on
+the application's GUI.
+It is only suppose to show where the dots will be punched on
+the paper before actually commanding the printer to print. 

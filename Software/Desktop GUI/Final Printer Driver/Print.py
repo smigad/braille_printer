@@ -8,9 +8,14 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from PyQt4 import QtCore, Qt
 import time
+from preview import *
+import ntpath
+import serial
+import subprocess
+import os
 
 class App(QtGui.QMainWindow, Ui_MainWindow):
-    
+
 	# To Make it avaliable for the cancel button action and file open Action
 	__directoryPath = ''
 	__FileType = 'Text Files (*.txt)'
@@ -24,10 +29,17 @@ class App(QtGui.QMainWindow, Ui_MainWindow):
 		self.UI.setupUi(self)
 
 		#Button
+		self.UI.Status.setStyleSheet("QLabel { color: red; }")
 		self.UI.OpenButton.clicked.connect(lambda : self.OpenButton_Action(self.UI.OpenButton))
 		self.UI.PreviewButton.clicked.connect(lambda : self.PreviewButton_Action(self.UI.PrintButton))
 		self.UI.PrintButton.clicked.connect(lambda : self.PrintButton_Action(self.UI.PrintButton))
 		self.UI.CancelButton.clicked.connect(lambda : self.CancelButton_Action(self.UI.CancelButton))
+        # if os.listdir('/dev/').count('ttyACM0') != 0:
+        #     self.UI.Status.setText("Connected")
+        #     self.UI.Status.setStyleSheet("QLabel { color: green; }")
+        # else:
+        #     self.UI.Status.setText("Disconnected")
+        #     self.UI.Status.setStyleSheet("QLabel { color: red; }")
 
 
 	# used to Display Message Boxss
@@ -39,7 +51,7 @@ class App(QtGui.QMainWindow, Ui_MainWindow):
 			return QMessageBox.question(self, 'Cancel', "Are You Sure You Want to Cancel?", QMessageBox.Yes | QMessageBox.No)
 
 		elif kind == 'Print':
-			return QMessageBox.question(self, 'Print', "Are You Sure You Want to Print {} ?".format(str(self.__directoryPath)), QMessageBox.Yes | QMessageBox.No)
+			return QMessageBox.question(self, 'Print', "Are You Sure You Want to Print {} ?".format(ntpath.basename(str(self.__directoryPath))), QMessageBox.Yes | QMessageBox.No)
 
     # Open Button Action
 	def OpenButton_Action(self, OpenBtn):
@@ -55,20 +67,37 @@ class App(QtGui.QMainWindow, Ui_MainWindow):
 				text = File.read()
 				self.UI.TextArea.setText(text)
 
+	def updateStatusLabel(self, changeTo):
+		if changeTo == 'connect':
+			self.UI.Status.setText("Connected")
+			self.UI.Status.setStyleSheet("QLabel { color: green; }")
+		else:
+			self.UI.Status.setText("Disconnected")
+			self.UI.Status.setStyleSheet("QLabel { color: red; }")
+
 	# Preview Button Action
 	def PreviewButton_Action(self, PreviewBtn):
-		print "Preview Button Clicked!"
+		if self.UI.TextArea.toPlainText() == "" or self.__directoryPath == "":
+			print "Nothing to show!"
+		else:
+			print "Preview Button Clicked!"
+			self.updateStatusLabel('connect')
+			test(self.__directoryPath)
 
     # Print Button Action
 	def PrintButton_Action(self, PrintBtn):
 		if self.UI.TextArea.toPlainText() == "" or self.__directoryPath == "":
-			print "Why?"
+			print "File Not Selected!"
 		else:
 			choice = self.DisplayMessage('Print')
 			if choice == QMessageBox.Yes:
 				print "Printing......."
-			else:
-				print "Not Printing......."
+                subprocess.call(['/home/dagiopia/Documents/Braille Printer/git_repo/Software/Main/braille_celler', self.__directoryPath])
+                self.s_port = serial.Serial('/dev/ttyACM0')
+                f = open('output__file')
+                str = f.readlines()[0]
+                self.s_port.write(str)
+                #print output
 
     # Cancel Button Action
 	def CancelButton_Action(self, CancelBtn):
@@ -88,5 +117,5 @@ def main():
    ex = App()
    ex.show()
    sys.exit(app.exec_())
-	
+
 if __name__ == '__main__':main()

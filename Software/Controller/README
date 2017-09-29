@@ -1,0 +1,9 @@
+Braille Printer Micro-controller Code
+
+The code here is written for an Arduino Mega board.
+The exact version of the board doesn't matter. The only
+influence in choosing the Arduino Mega is that it has 4KB
+EEPROM. The cheaper Arduino boards have less capacity.
+Although this was the plan, the current code can work with
+any popular Arduino board as the data sent from the computer
+is stored in RAM and not in the EEPROM. 

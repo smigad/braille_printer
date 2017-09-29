@@ -29,7 +29,7 @@ For Example
 
 Even with this method the EEPROM won't be enough but at least it would be
 better than the first.
-Assuming the extreme maximum, there could be 27*30*6 = 4860 dots to be printed
+Assuming extreme maximum, there could be 27*30*6 = 4860 dots to be printed
 and that is bigger than the available EEPROM space
 
  */
@@ -40,8 +40,8 @@ and that is bigger than the available EEPROM space
 #define motor1_SPR 200 //steps per revolution of motor one (x direction)
 #define motor2_SPR 300 //steps per revolution of motor two (y direction)
 
-Stepper motor1(motor1_SPR, A1, A2, A3, A4); //pins of motor1 - the horizontal one
-Stepper motor2(motor2_SPR, A5, A6, A7, A8); //pins of motor2 - the vertical one
+Stepper motor1(motor1_SPR, A1, A2, A3, A4);
+Stepper motor2(motor2_SPR, A5, A6, A7, A8);
 
 //limit buttons pins
 #define LIMIT_X 2
@@ -61,14 +61,35 @@ typedef struct {
 } COORD;
 
 
-//motion paramters
-#define H_D_S 60    //Horizontal dot spacing
-#define H_C_S 100   //Horizontal cell spacing
-#define V_D_S 550   //Vertical dot spacing
-#define V_C_S 2000  //Vertical cell spacing
-#define S_S 100     //solenoid time spacing
-#define H_I_D 370   //Horizontal Initial Distance
-#define V_I_D 3200  //Vertical Initial Distance
+#define H_D_S 60
+#define H_C_S 100
+#define V_D_S 550
+#define V_C_S 2000
+#define S_S 100
+#define H_I_D 370
+#define V_I_D 3200
+
+/*
+h
+    d 60
+    c 100
+
+v
+    d 550
+    c 2000
+
+s
+    100
+
+after init_pos
+    h 360
+    v 3100
+
+
+
+*/
+
+//constants
 
 //States
 #define IDLE 0
@@ -91,7 +112,6 @@ COORD cmd_pos;
 void init_pos();
 void move_next(COORD);
 void punch_dot();
-void test_calibration(char, int);
 
 String data;
 
@@ -113,20 +133,27 @@ void setup()
   init_pos();
 }
 
-#define _DEBUG_ 1;
-
 void loop()
 {
 
-    #ifdef _DEBUG_
-        for(;;){
-            if(Serial.available()){
-                char tag = Serial.read();
-                int move = Serial.parseInt();
-                test_calibration(tag, move);
-            }
+    for(;;){
+        if(Serial.available()){
+            char tag = Serial.read();
+            int move = Serial.parseInt();
+            Serial.print("TAG: ");
+            Serial.println(tag);
+            Serial.print("MOVE: ");
+            Serial.println(move);
+            if (tag == 'h')
+                motor1.step(move);
+            else if(tag == 'v')
+                motor2.step(move);
+            else if(tag == 's')
+                punch_dot(move);
+            else if(tag == 'i')
+                init_pos();
         }
-    #endif
+    }
 
 
     switch (STATE) {
@@ -139,17 +166,17 @@ void loop()
 
             if (Serial.available()){
                 //accept incoming data and store in EEPROM
+                //TODO know exactly how much data the buffer can store
+                //if not good then send one coordinate at a time with a
+                //terminating token at the end
+
                 //TODO add data length checking and if greater than
                 //specified value, stop receiving and reply a notification
+
                 //TODO also reserve the first few bytes of the EEPROM for
                 //data size storage. Maybe begin printing at the 5th address
                 //and reserve the first 4 bytes for storing the length of the
                 //data received
-                // *
-                // *
-                //Sadly, I don't have time to do all I planned now. This is enough.
-                //It prints fine so maybe some other time.
-
                 data = Serial.readString();
                 // int address = 0;
                 // EEPROM.put(address, data);
@@ -245,23 +272,6 @@ void move_next(COORD next_pos)
 void punch_dot(int duration)
 {
     digitalWrite(VALVE, HIGH);
-    delay(duration); //give valve time to punch the paper
+    delay(duration); //give valve time to punch the paper TODO how much time???
     digitalWrite(VALVE, LOW);
-}
-
-
-void test_calibration(char tag, int move)
-{
-    Serial.print("TAG: ");
-    Serial.println(tag);
-    Serial.print("MOVE: ");
-    Serial.println(move);
-    if (tag == 'h')
-        motor1.step(move);
-    else if(tag == 'v')
-        motor2.step(move);
-    else if(tag == 's')
-        punch_dot(move);
-    else if(tag == 'i')
-        init_pos();
 }

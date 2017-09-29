@@ -295,18 +295,11 @@ void cell_locator(std::pair<BYTE*, uint32_t> cells)
 
     if (DEBUG) printf("SIZE OF LOCATIONS VECTOR: %lu\n", cell_positions.size());
     if (DEBUG) printf("\n\n***** DOT LOCATIONS *****\n\n");
-    std::string output;
     for (int i = 0; i < cell_positions.size() ; i++)
     {
         printf("%d, ", cell_positions[i]);
-        output.append<int>(1, cell_positions[i]+48);
-        output.append<char>(1, ',');
     }
-    std::ofstream out_file("output__file");
-    out_file << output;
-    out_file.close();
     printf("\n\n**** DONE TESTING ****\n");
-
 }
 
 
@@ -323,14 +316,8 @@ int func(){
 
 
 
-int main(int argc, char **argv)
+void init(int argc, char **argv)
 {
-	//expected arguments are Program <input text-file> <output-file>
-    prg_name = argv[0];
-	if(2 > argc < 5){
-		if (DEBUG) func();
-	}
-
 	FILE *input_file;
 	input_file = fopen(argv[1], "r");
 	if(input_file == NULL)

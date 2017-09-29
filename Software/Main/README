@@ -1,0 +1,7 @@
+Main Analysis and Conversion Code
+
+The code here is written in C++. It is the main text analysis subsystem
+and the text to braille converter.
+The main source file is text_to_cell.cpp
+It reads input text form the command line argument and converts the letters
+to braille according to the mapping provided in char_to_cell_mapping.txt
